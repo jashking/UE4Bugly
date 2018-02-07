@@ -46,7 +46,10 @@ void FBuglyAgent::TestANRCrash()
 
 void FBuglyAgent::TestNativeCrash()
 {
+	// Raise native crash
+	int* NullPointer = nullptr;
 
+	*NullPointer = 0;
 }
 
 void FBuglyAgent::SetUserId(const FString& InUserId)

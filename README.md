@@ -24,6 +24,15 @@
 
 打包工程，在手机上运行游戏，可以参考 `Demo` 里，有三个崩溃测试菜单按钮，可以测试崩溃，目前 `ANR` 类型的异常收集不到，不知道为什么
 
+Android 测试接口
+
+* Java Crash
+* Native Crash
+
+iOS 测试接口
+
+* Native Crash
+
 ### Bugly后台 ###
 
 产生异常后就可以在后台页面查看，如图
