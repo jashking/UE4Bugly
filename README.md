@@ -2,9 +2,16 @@
 
 腾讯Bugly虚幻4插件
 
-平台
+平台:
+
 * Android 测试通过
-* iOS 未测试
+* iOS 测试通过
+
+TODO:
+
+* 渠道、版本号和包名等信息设置接口
+* Android上ANR异常收集不到
+* iOS上自定义log收集不到
 
 ## 如何使用 ##
 
@@ -37,11 +44,21 @@ iOS 测试接口
 
 产生异常后就可以在后台页面查看，如图
 
+* 崩溃列表
+
 ![崩溃列表](Plugins/Bugly/Resources/Crashes.png)
+
+* 自定义数据
 
 ![自定义数据](Plugins/Bugly/Resources/UserData.png)
 
+* 自定义Log
+
 ![自定义Log](Plugins/Bugly/Resources/CustomLog.png)
+
+* iOS 崩溃堆栈
+
+![自定义Log](Plugins/Bugly/Resources/iOSCrash.png)
 
 ## 更新Bugly SDK ##
 
