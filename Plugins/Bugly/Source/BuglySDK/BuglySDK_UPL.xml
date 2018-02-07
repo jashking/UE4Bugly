@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+	<init>
+		<log text="Tencent Bugly init"/>
+	</init>
+
+	<resourceCopies>
+	    <copyFile src="$S(PluginDir)/Android/libs/bugly_crash_release.jar" dst="$S(BuildDir)/libs/bugly_crash_release.jar" />
+		<copyDir src="$S(PluginDir)/Android/libs/$S(Architecture)/" dst="$S(BuildDir)/libs/$S(Architecture)/" />
+	</resourceCopies>
+
+	<proguardAdditions>
+		<insert>
+			-dontwarn com.tencent.bugly.**
+			-keep public class com.tencent.bugly.**{*;}
+		</insert>
+	</proguardAdditions>
+
+	<androidManifestUpdates>
+		<addPermission android:name="android.permission.READ_PHONE_STATE" />
+		<addPermission android:name="android.permission.INTERNET" />
+		<addPermission android:name="android.permission.ACCESS_NETWORK_STATE" />
+		<addPermission android:name="android.permission.ACCESS_WIFI_STATE" />
+		<addPermission android:name="android.permission.READ_LOGS" />
+	</androidManifestUpdates>
+
+	<gameActivityImportAdditions>
+		<insert>
+			import com.tencent.bugly.crashreport.CrashReport;
+			import com.tencent.bugly.crashreport.BuglyLog;
+		</insert>
+	</gameActivityImportAdditions>
+
+	<gameActivityClassAdditions>
+		<insert>
+			public void AndroidThunkJava_Bugly_TestJavaCrash()
+			{
+			CrashReport.testJavaCrash();
+			}
+
+			public void AndroidThunkJava_Bugly_TestANRCrash()
+			{
+			CrashReport.testANRCrash();
+			}
+
+			public void AndroidThunkJava_Bugly_TestNativeCrash()
+			{
+			CrashReport.testNativeCrash();
+			}
+			
+			public void AndroidThunkJava_Bugly_InitCrashReport(String AppID, boolean bDebug)
+			{
+			CrashReport.initCrashReport(getApplicationContext(), AppID, bDebug);
+			}
+			
+			public void AndroidThunkJava_Bugly_SetUserId(String UserId)
+			{
+			CrashReport.setUserId(UserId);
+			}
+			
+			public void AndroidThunkJava_Bugly_SetUserSceneTag(int TagId)
+			{
+			CrashReport.setUserSceneTag(getApplicationContext(), TagId);
+			}
+			
+			public void AndroidThunkJava_Bugly_PutUserData(String Key, String Value)
+			{
+			CrashReport.putUserData(getApplicationContext(), Key, Value);
+			}
+			
+			public void AndroidThunkJava_Bugly_LogVerbose(String Tag, String Log)
+			{
+			BuglyLog.v(Tag, Log);
+			}
+			
+			public void AndroidThunkJava_Bugly_LogDebug(String Tag, String Log)
+			{
+			BuglyLog.d(Tag, Log);
+			}
+			
+			public void AndroidThunkJava_Bugly_LogInfo(String Tag, String Log)
+			{
+			BuglyLog.i(Tag, Log);
+			}
+			
+			public void AndroidThunkJava_Bugly_LogWarning(String Tag, String Log)
+			{
+			BuglyLog.w(Tag, Log);
+			}
+			
+			public void AndroidThunkJava_Bugly_LogError(String Tag, String Log)
+			{
+			BuglyLog.e(Tag, Log);
+			}
+			
+			public void AndroidThunkJava_Bugly_SetLogCache(int ByteSize)
+			{
+			BuglyLog.setCache(ByteSize);
+			}
+		</insert>
+	</gameActivityClassAdditions>
+	
+</root>
