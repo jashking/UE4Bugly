@@ -8,6 +8,7 @@ public class UE4BuglyTarget : TargetRules
 	public UE4BuglyTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
+		DefaultBuildSettings = BuildSettingsVersion.V2;
 
 		ExtraModuleNames.AddRange( new string[] { "UE4Bugly" } );
 	}

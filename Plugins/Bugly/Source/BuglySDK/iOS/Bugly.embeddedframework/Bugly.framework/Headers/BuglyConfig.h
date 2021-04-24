@@ -39,6 +39,16 @@ BLY_START_NONNULL
  */
 - (NSString * BLY_NULLABLE)attachmentForException:(NSException * BLY_NULLABLE)exception;
 
+
+/**
+ *  策略激活时回调
+ *
+ *  @param tacticInfo
+ *
+ *  @return app是否弹框展示
+ */
+- (BOOL) h5AlertForTactic:(NSDictionary *)tacticInfo;
+
 @end
 
 @interface BuglyConfig : NSObject
@@ -121,6 +131,11 @@ BLY_START_NONNULL
  * 当赋值为0时，则不会自动abort进程退出
  */
 @property (nonatomic, assign) NSUInteger crashAbortTimeout;
+
+/**
+ *  设置自定义联网、crash上报域名
+ */
+@property (nonatomic, copy) NSString *crashServerUrl;
 
 @end
 BLY_END_NONNULL

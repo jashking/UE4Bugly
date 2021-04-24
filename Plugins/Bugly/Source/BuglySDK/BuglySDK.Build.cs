@@ -1,6 +1,7 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
+using Tools.DotNETCommon;
 using System.IO;
 
 public class BuglySDK : ModuleRules
@@ -9,20 +10,25 @@ public class BuglySDK : ModuleRules
 	{
 		Type = ModuleType.External;
 
+		PublicDefinitions.Add("WITH_BUGLY=1");
+
 		if (Target.Platform == UnrealTargetPlatform.IOS)
 		{
-			PublicAdditionalFrameworks.Add(new UEBuildFramework("Bugly", "iOS/Bugly.embeddedframework.zip"));
+			string BuglyFrameworkPath = Path.Combine(ModuleDirectory, "iOS/Bugly.embeddedframework.zip");
+			PublicAdditionalFrameworks.Add(new Framework("Bugly", BuglyFrameworkPath));
+
+			Log.TraceInformation("Add bugly framework: {0}", BuglyFrameworkPath);
 
 			PublicFrameworks.Add("SystemConfiguration");
 			PublicFrameworks.Add("Security");
 
-			PublicAdditionalLibraries.Add("z");
-			PublicAdditionalLibraries.Add("c++");
+			PublicSystemLibraries.Add("c++");
+			PublicSystemLibraries.Add("z");
 		}
 		else if (Target.Platform == UnrealTargetPlatform.Android)
 		{
 			string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
-			AdditionalPropertiesForReceipt.Add(new ReceiptProperty("AndroidPlugin", Path.Combine(PluginPath, "BuglySDK_UPL.xml")));
+			AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "BuglySDK_UPL.xml"));
 		}
 	}
 }

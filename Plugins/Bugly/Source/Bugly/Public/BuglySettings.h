@@ -15,15 +15,24 @@ class BUGLY_API UBuglySettings : public UObject
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere, config)
+	FString BuglyAppVersion;
+
+	UPROPERTY(EditAnywhere, config)
+	FString BuglyAppChannel;
+
+	UPROPERTY(EditAnywhere, config)
+	bool bBuglyEnableDebug = false;
+
 	UPROPERTY(EditAnywhere, config, Category = "Android")
 	FString AndroidAppID;
 	
 	UPROPERTY(EditAnywhere, config, Category = "Android")
 	FString AndroidAppKey;
 
-	UPROPERTY(EditAnywhere, config, Category = "iOS")
+	UPROPERTY(EditAnywhere, config, Category = "IOS")
 	FString IOSAppID;
 
-	UPROPERTY(EditAnywhere, config, Category = "iOS")
+	UPROPERTY(EditAnywhere, config, Category = "IOS")
 	FString IOSAppKey;
 };

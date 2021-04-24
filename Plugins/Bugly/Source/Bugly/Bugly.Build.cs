@@ -9,21 +9,6 @@ public class Bugly : ModuleRules
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicIncludePaths.Add("Bugly/Public");
-		PrivateIncludePaths.Add("Bugly/Private");
-		if (Target.Platform == UnrealTargetPlatform.IOS)
-		{
-			PrivateIncludePaths.Add("Bugly/Private/IOS");
-		}
-		else if (Target.Platform == UnrealTargetPlatform.Android)
-		{
-			PrivateIncludePaths.Add("Bugly/Private/Android");
-		}
-		else
-		{
-			PrivateIncludePaths.Add("Bugly/Private/Dummy");
-		}
-
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
