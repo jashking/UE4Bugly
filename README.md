@@ -7,12 +7,6 @@
 * Android 测试通过
 * iOS 测试通过
 
-TODO:
-
-* 渠道、版本号和包名等信息设置接口
-* Android上ANR异常收集不到
-* iOS上自定义log收集不到
-
 ## 如何使用 ##
 
 ### 编译插件 ###
@@ -64,9 +58,9 @@ iOS 测试接口
 
 ### 目前使用的版本 ###
 
-* Android NDK: 3.3.1
-* Android SDK: 2.6.6
-* iOS SDK: 2.5.0
+* Android NDK: 3.9.0
+* Android SDK: 3.3.9
+* iOS SDK: 2.5.9
 
 ### 更新 Android SDK ###
 
