@@ -2,6 +2,7 @@
 
 using UnrealBuildTool;
 using System;
+using Tools.DotNETCommon;
 
 public class Bugly : ModuleRules
 {
@@ -30,6 +31,17 @@ public class Bugly : ModuleRules
 		if (Target.Platform == UnrealTargetPlatform.Android)
 		{
 			PrivateDependencyModuleNames.AddRange(new string[] { "Launch" });
+
+			// Fetch bugly so version from environment
+			//string VersionDisplayNameInEnv = System.Environment.GetEnvironmentVariable("PACKAGE_BASE_VERSION");
+			//string VersionNoStrInEnv = System.Environment.GetEnvironmentVariable("PACKAGE_BUILD_NO");
+			//if (!string.IsNullOrEmpty(VersionDisplayNameInEnv) && !string.IsNullOrEmpty(VersionNoStrInEnv))
+			//{
+			//	string BuglySoVersion = string.Format("BUGLY_SO_VERSION=\"{0}.{1}\"", VersionDisplayNameInEnv, VersionNoStrInEnv);
+
+			//	Log.TraceInformation("Append bugly so version in source: {0}", BuglySoVersion);
+			//	PrivateDefinitions.Add(string.Format("{0}", BuglySoVersion));
+			//}
 		}
 	}
 }

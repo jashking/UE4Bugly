@@ -18,6 +18,12 @@ jmethodID FAndroidBugly::LogWarningMethod;
 jmethodID FAndroidBugly::LogErrorMethod;
 jmethodID FAndroidBugly::SetLogCacheMethod;
 
+//#ifdef BUGLY_SO_VERSION
+//#define BUGLY_STR_HELPER(x) #x
+//#define BUGLY_STR(x) BUGLY_STR_HELPER(x)
+//extern "C" const char SO_FILE_VERSION[] __attribute__((section(".bugly_version"))) = BUGLY_STR(BUGLY_SO_VERSION);
+//#endif // BUGLY_SO_VERSION
+
 FAndroidBugly::FAndroidBugly()
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
@@ -123,7 +129,7 @@ void FAndroidBugly::PutUserData(const FString& InKey, const FString& InValue)
 	}
 }
 
-void FAndroidBugly::LogVerbose(const FString& InTag, const FString& InLog)
+void FAndroidBugly::LogVerbose(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
@@ -137,7 +143,7 @@ void FAndroidBugly::LogVerbose(const FString& InTag, const FString& InLog)
 	}
 }
 
-void FAndroidBugly::LogDebug(const FString& InTag, const FString& InLog)
+void FAndroidBugly::LogDebug(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
@@ -151,7 +157,7 @@ void FAndroidBugly::LogDebug(const FString& InTag, const FString& InLog)
 	}
 }
 
-void FAndroidBugly::LogInfo(const FString& InTag, const FString& InLog)
+void FAndroidBugly::LogInfo(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
@@ -165,7 +171,7 @@ void FAndroidBugly::LogInfo(const FString& InTag, const FString& InLog)
 	}
 }
 
-void FAndroidBugly::LogWarning(const FString& InTag, const FString& InLog)
+void FAndroidBugly::LogWarning(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
@@ -179,7 +185,7 @@ void FAndroidBugly::LogWarning(const FString& InTag, const FString& InLog)
 	}
 }
 
-void FAndroidBugly::LogError(const FString& InTag, const FString& InLog)
+void FAndroidBugly::LogError(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{

@@ -27,7 +27,7 @@ void FIOSBugly::OnStartup(const FString& InAppId, const FString& InAppVersion, c
 	BuglyConfig* config = [[BuglyConfig alloc]init];
 	config.reportLogLevel = BuglyLogLevelVerbose;
 	config.version = AppVersionOC;
-	config.channel = AppVersionOC;
+	config.channel = AppChannelOC;
 	config.debugMode = bDebug;
 
 	[Bugly startWithAppId : AppIDOC config : config];
@@ -75,44 +75,39 @@ void FIOSBugly::PutUserData(const FString& InKey, const FString& InValue)
 	[Bugly setUserValue : ValueOC forKey : KeyOC];
 }
 
-void FIOSBugly::LogVerbose(const FString& InTag, const FString& InLog)
+void FIOSBugly::LogVerbose(const FString& InLog, const FString& InTag)
 {
-	NSString* TagOC = [NSString stringWithFString : InTag];
 	NSString* LogOC = [NSString stringWithFString : InLog];
 
-	[BuglyLog level : BuglyLogLevelVerbose tag : TagOC log : @"%@",LogOC];
+	BLYLogVerbose(@"%@", LogOC);
 }
 
-void FIOSBugly::LogDebug(const FString& InTag, const FString& InLog)
+void FIOSBugly::LogDebug(const FString& InLog, const FString& InTag)
 {
-	NSString* TagOC = [NSString stringWithFString : InTag];
 	NSString* LogOC = [NSString stringWithFString : InLog];
 
-	[BuglyLog level : BuglyLogLevelDebug tag : TagOC log : @"%@",LogOC];
+	BLYLogDebug(@"%@", LogOC);
 }
 
-void FIOSBugly::LogInfo(const FString& InTag, const FString& InLog)
+void FIOSBugly::LogInfo(const FString& InLog, const FString& InTag)
 {
-	NSString* TagOC = [NSString stringWithFString : InTag];
 	NSString* LogOC = [NSString stringWithFString : InLog];
 
-	[BuglyLog level : BuglyLogLevelInfo tag : TagOC log : @"%@",LogOC];
+	BLYLogInfo(@"%@", LogOC);
 }
 
-void FIOSBugly::LogWarning(const FString& InTag, const FString& InLog)
+void FIOSBugly::LogWarning(const FString& InLog, const FString& InTag)
 {
-	NSString* TagOC = [NSString stringWithFString : InTag];
 	NSString* LogOC = [NSString stringWithFString : InLog];
 
-	[BuglyLog level : BuglyLogLevelWarn tag : TagOC log : @"%@",LogOC];
+	BLYLogWarn(@"%@", LogOC);
 }
 
-void FIOSBugly::LogError(const FString& InTag, const FString& InLog)
+void FIOSBugly::LogError(const FString& InLog, const FString& InTag)
 {
-	NSString* TagOC = [NSString stringWithFString : InTag];
 	NSString* LogOC = [NSString stringWithFString : InLog];
 
-	[BuglyLog level : BuglyLogLevelError tag : TagOC log : @"%@",LogOC];
+	BLYLogError(@"%@", LogOC);
 }
 
 void FIOSBugly::SetLogCache(int32 ByteSize)

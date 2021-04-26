@@ -50,27 +50,27 @@ void FGenericBugly::PutUserData(const FString& InKey, const FString& InValue)
 
 }
 
-void FGenericBugly::LogVerbose(const FString& InTag, const FString& InLog)
+void FGenericBugly::LogVerbose(const FString& InLog, const FString& InTag)
 {
 
 }
 
-void FGenericBugly::LogDebug(const FString& InTag, const FString& InLog)
+void FGenericBugly::LogDebug(const FString& InLog, const FString& InTag)
 {
 
 }
 
-void FGenericBugly::LogInfo(const FString& InTag, const FString& InLog)
+void FGenericBugly::LogInfo(const FString& InLog, const FString& InTag)
 {
 
 }
 
-void FGenericBugly::LogWarning(const FString& InTag, const FString& InLog)
+void FGenericBugly::LogWarning(const FString& InLog, const FString& InTag)
 {
 
 }
 
-void FGenericBugly::LogError(const FString& InTag, const FString& InLog)
+void FGenericBugly::LogError(const FString& InLog, const FString& InTag)
 {
 
 }

@@ -36,7 +36,7 @@ void FBuglyModule::StartupModule()
 
 		GConfig->GetString(TEXT("/Script/Bugly.BuglySettings"), TEXT("BuglyAppVersion"), BuglyAppVersion, GGameIni);
 		GConfig->GetString(TEXT("/Script/Bugly.BuglySettings"), TEXT("BuglyAppChannel"), BuglyAppChannel, GGameIni);
-		GConfig->GetBool(TEXT("/Script/Bugly.BuglySettings"), TEXT("BuglyAppChannel"), bBuglyEnableDebug, GGameIni);
+		GConfig->GetBool(TEXT("/Script/Bugly.BuglySettings"), TEXT("bBuglyEnableDebug"), bBuglyEnableDebug, GGameIni);
 
 		Bugly->OnStartup(BuglyAppId, BuglyAppVersion, BuglyAppChannel, bBuglyEnableDebug);
 	}

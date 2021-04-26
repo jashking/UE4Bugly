@@ -26,10 +26,10 @@ public:
 	virtual void SetUserId(const FString& InUserId);
 	virtual void SetUserSceneTag(int32 InSceneTag);
 	virtual void PutUserData(const FString& InKey, const FString& InValue);
-	virtual void LogVerbose(const FString& InTag, const FString& InLog);
-	virtual void LogDebug(const FString& InTag, const FString& InLog);
-	virtual void LogInfo(const FString& InTag, const FString& InLog);
-	virtual void LogWarning(const FString& InTag, const FString& InLog);
-	virtual void LogError(const FString& InTag, const FString& InLog);
+	virtual void LogVerbose(const FString& InLog, const FString& InTag = TEXT(""));
+	virtual void LogDebug(const FString& InLog, const FString& InTag = TEXT(""));
+	virtual void LogInfo(const FString& InLog, const FString& InTag = TEXT(""));
+	virtual void LogWarning(const FString& InLog, const FString& InTag = TEXT(""));
+	virtual void LogError(const FString& InLog, const FString& InTag = TEXT(""));
 	virtual void SetLogCache(int32 ByteSize);
 };
