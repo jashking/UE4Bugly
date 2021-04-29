@@ -4,16 +4,6 @@
 
 #include "BuglyModule.h"
 
-void UBuglyBlueprintLibrary::TestJavaCrash()
-{
-	FBuglyModule::Get().GetBugly()->TestJavaCrash();
-}
-
-void UBuglyBlueprintLibrary::TestANRCrash()
-{
-	FBuglyModule::Get().GetBugly()->TestANRCrash();
-}
-
 void UBuglyBlueprintLibrary::TestNativeCrash()
 {
 	FBuglyModule::Get().GetBugly()->TestNativeCrash();
@@ -34,32 +24,37 @@ void UBuglyBlueprintLibrary::PutUserData(const FString& InKey, const FString& In
 	FBuglyModule::Get().GetBugly()->PutUserData(InKey, InValue);
 }
 
-void UBuglyBlueprintLibrary::LogVerbose(const FString& InTag, const FString& InLog)
+void UBuglyBlueprintLibrary::LogVerbose(const FString& InLog, const FString& InTag/* = TEXT("")*/)
 {
-	FBuglyModule::Get().GetBugly()->LogVerbose(InTag, InLog);
+	FBuglyModule::Get().GetBugly()->LogVerbose(InLog, InTag);
 }
 
-void UBuglyBlueprintLibrary::LogDebug(const FString& InTag, const FString& InLog)
+void UBuglyBlueprintLibrary::LogDebug(const FString& InLog, const FString& InTag/* = TEXT("")*/)
 {
-	FBuglyModule::Get().GetBugly()->LogDebug(InTag, InLog);
+	FBuglyModule::Get().GetBugly()->LogDebug(InLog, InTag);
 }
 
-void UBuglyBlueprintLibrary::LogInfo(const FString& InTag, const FString& InLog)
+void UBuglyBlueprintLibrary::LogInfo(const FString& InLog, const FString& InTag/* = TEXT("")*/)
 {
-	FBuglyModule::Get().GetBugly()->LogInfo(InTag, InLog);
+	FBuglyModule::Get().GetBugly()->LogInfo(InLog, InTag);
 }
 
-void UBuglyBlueprintLibrary::LogWarning(const FString& InTag, const FString& InLog)
+void UBuglyBlueprintLibrary::LogWarning(const FString& InLog, const FString& InTag/* = TEXT("")*/)
 {
-	FBuglyModule::Get().GetBugly()->LogWarning(InTag, InLog);
+	FBuglyModule::Get().GetBugly()->LogWarning(InLog, InTag);
 }
 
-void UBuglyBlueprintLibrary::LogError(const FString& InTag, const FString& InLog)
+void UBuglyBlueprintLibrary::LogError(const FString& InLog, const FString& InTag/* = TEXT("")*/)
 {
-	FBuglyModule::Get().GetBugly()->LogError(InTag, InLog);
+	FBuglyModule::Get().GetBugly()->LogError(InLog, InTag);
 }
 
 void UBuglyBlueprintLibrary::SetLogCache(int32 ByteSize)
 {
 	FBuglyModule::Get().GetBugly()->SetLogCache(ByteSize);
+}
+
+void UBuglyBlueprintLibrary::UpdateVersion(const FString& InVersion)
+{
+	FBuglyModule::Get().GetBugly()->UpdateVersion(InVersion);
 }

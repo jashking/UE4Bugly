@@ -12,12 +12,6 @@ class BUGLY_API UBuglyBlueprintLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 	UFUNCTION(BlueprintCallable, Category = "Bugly")
-	static void TestJavaCrash();
-
-	UFUNCTION(BlueprintCallable, Category = "Bugly")
-	static void TestANRCrash();
-
-	UFUNCTION(BlueprintCallable, Category = "Bugly")
 	static void TestNativeCrash();
 
 	UFUNCTION(BlueprintCallable, Category = "Bugly")
@@ -30,20 +24,23 @@ class BUGLY_API UBuglyBlueprintLibrary : public UBlueprintFunctionLibrary
 	static void PutUserData(const FString& InKey, const FString& InValue);
 
 	UFUNCTION(BlueprintCallable, Category = "Bugly")
-	static void LogVerbose(const FString& InTag, const FString& InLog);
+	static void LogVerbose(const FString& InLog, const FString& InTag = TEXT(""));
 	
 	UFUNCTION(BlueprintCallable, Category = "Bugly")
-	static void LogDebug(const FString& InTag, const FString& InLog);
+	static void LogDebug(const FString& InLog, const FString& InTag = TEXT(""));
 	
 	UFUNCTION(BlueprintCallable, Category = "Bugly")
-	static void LogInfo(const FString& InTag, const FString& InLog);
+	static void LogInfo(const FString& InLog, const FString& InTag = TEXT(""));
 	
 	UFUNCTION(BlueprintCallable, Category = "Bugly")
-	static void LogWarning(const FString& InTag, const FString& InLog);
+	static void LogWarning(const FString& InLog, const FString& InTag = TEXT(""));
 	
 	UFUNCTION(BlueprintCallable, Category = "Bugly")
-	static void LogError(const FString& InTag, const FString& InLog);
+	static void LogError(const FString& InLog, const FString& InTag = TEXT(""));
 
 	UFUNCTION(BlueprintCallable, Category = "Bugly")
 	static void SetLogCache(int32 ByteSize);
+
+	UFUNCTION(BlueprintCallable, Category = "Bugly")
+	static void UpdateVersion(const FString& InVersion);
 };

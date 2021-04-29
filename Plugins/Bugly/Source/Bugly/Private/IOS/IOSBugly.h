@@ -12,11 +12,6 @@ public:
 
 	virtual void OnStartup(const FString& InAppId, const FString& InAppVersion, const FString& InAppChanenl, bool bDebug) override;
 	virtual void OnShutdown() override;
-
-	virtual void TestJavaCrash() override;
-	virtual void TestANRCrash() override;
-	virtual void TestNativeCrash() override;
-
 	virtual void SetUserId(const FString& InUserId) override;
 	virtual void SetUserSceneTag(int32 InSceneTag) override;
 	virtual void PutUserData(const FString& InKey, const FString& InValue) override;
@@ -26,4 +21,5 @@ public:
 	virtual void LogWarning(const FString& InLog, const FString& InTag = TEXT("")) override;
 	virtual void LogError(const FString& InLog, const FString& InTag = TEXT("")) override;
 	virtual void SetLogCache(int32 ByteSize) override;
+	virtual void UpdateVersion(const FString& InAppVersion) override;
 };

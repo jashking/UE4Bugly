@@ -3,10 +3,30 @@
 #include "IOSBugly.h"
 
 #include "BuglyDefines.h"
+#include "BuglyModule.h"
+#include "GenericBuglyDelegate.h"
 
 #import <Bugly/Bugly.h>
 #import <Bugly/BuglyConfig.h>
 #import <Bugly/BuglyLog.h>
+
+@interface FBuglyCrashDelegate : NSObject<BuglyDelegate>
+@end
+
+@implementation FBuglyCrashDelegate
+
+- (NSString*)attachmentForException:(NSException*)exception
+{
+	UE_LOG(LogBugly, Error, TEXT("Bugly caught an exception!"));
+
+	TSharedPtr<FGenericBuglyDelegate> CrashDelegate = FBuglyModule::Get().GetBugly()->GetCrashDelegate();
+	const FString Logs = CrashDelegate.IsValid() ? CrashDelegate->OnCrashNotify() : TEXT("");
+
+	NSString* LogsOC = [NSString stringWithFString : Logs];
+	return LogsOC;
+}
+
+@end
 
 FIOSBugly::FIOSBugly()
 {
@@ -29,30 +49,13 @@ void FIOSBugly::OnStartup(const FString& InAppId, const FString& InAppVersion, c
 	config.version = AppVersionOC;
 	config.channel = AppChannelOC;
 	config.debugMode = bDebug;
+	config.delegate = [[FBuglyCrashDelegate alloc]init];
 
 	[Bugly startWithAppId : AppIDOC config : config];
 }
 
 void FIOSBugly::OnShutdown()
 {
-}
-
-void FIOSBugly::TestJavaCrash()
-{
-
-}
-
-void FIOSBugly::TestANRCrash()
-{
-
-}
-
-void FIOSBugly::TestNativeCrash()
-{
-	// Raise native crash
-	int* NullPointer = nullptr;
-
-	*NullPointer = 0;
 }
 
 void FIOSBugly::SetUserId(const FString& InUserId)
@@ -113,4 +116,11 @@ void FIOSBugly::LogError(const FString& InLog, const FString& InTag)
 void FIOSBugly::SetLogCache(int32 ByteSize)
 {
 
+}
+
+void FIOSBugly::UpdateVersion(const FString& InAppVersion)
+{
+	NSString* AppVersionOC = [NSString stringWithFString : InAppVersion];
+
+	[Bugly updateAppVersion : AppVersionOC];
 }

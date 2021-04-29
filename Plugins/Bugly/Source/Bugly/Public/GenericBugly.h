@@ -3,13 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Templates/SharedPointer.h"
+#include "GenericBuglyDelegate.h"
 
-/**
- * TODO:
- * 1. Set app channel
- * 2. Set app version
- * 3. Set app package name
- */
 class BUGLY_API FGenericBugly
 {
 public:
@@ -18,11 +14,9 @@ public:
 
 	virtual void OnStartup(const FString& InAppId, const FString& InAppVersion, const FString& InAppChanenl, bool bDebug);
 	virtual void OnShutdown();
-
-	virtual void TestJavaCrash();
-	virtual void TestANRCrash();
+	virtual void SetCrashDelegate(TSharedPtr<FGenericBuglyDelegate> InCrashDelegate);
+	virtual TSharedPtr<FGenericBuglyDelegate> GetCrashDelegate();
 	virtual void TestNativeCrash();
-
 	virtual void SetUserId(const FString& InUserId);
 	virtual void SetUserSceneTag(int32 InSceneTag);
 	virtual void PutUserData(const FString& InKey, const FString& InValue);
@@ -32,4 +26,8 @@ public:
 	virtual void LogWarning(const FString& InLog, const FString& InTag = TEXT(""));
 	virtual void LogError(const FString& InLog, const FString& InTag = TEXT(""));
 	virtual void SetLogCache(int32 ByteSize);
+	virtual void UpdateVersion(const FString& InAppVersion);
+
+protected:
+	TSharedPtr<FGenericBuglyDelegate> CrashDelegate;
 };

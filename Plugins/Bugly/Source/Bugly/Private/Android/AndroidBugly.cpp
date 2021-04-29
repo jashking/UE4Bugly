@@ -2,12 +2,13 @@
 
 #include "AndroidBugly.h"
 
+#include "Android/AndroidJavaEnv.h"
+
 #include "BuglyDefines.h"
+#include "BuglyModule.h"
+#include "GenericBuglyDelegate.h"
 
 jmethodID FAndroidBugly::InitCrashReportMethod;
-jmethodID FAndroidBugly::TestJavaCrashMethod;
-jmethodID FAndroidBugly::TestANRCrashMethod;
-jmethodID FAndroidBugly::TestNativeCrashMethod;
 jmethodID FAndroidBugly::SetUserIdMethod;
 jmethodID FAndroidBugly::SetUserSceneTagMethod;
 jmethodID FAndroidBugly::PutUserDataMethod;
@@ -17,6 +18,7 @@ jmethodID FAndroidBugly::LogInfoMethod;
 jmethodID FAndroidBugly::LogWarningMethod;
 jmethodID FAndroidBugly::LogErrorMethod;
 jmethodID FAndroidBugly::SetLogCacheMethod;
+jmethodID FAndroidBugly::UpdateAppVersionMethod;
 
 //#ifdef BUGLY_SO_VERSION
 //#define BUGLY_STR_HELPER(x) #x
@@ -24,15 +26,23 @@ jmethodID FAndroidBugly::SetLogCacheMethod;
 //extern "C" const char SO_FILE_VERSION[] __attribute__((section(".bugly_version"))) = BUGLY_STR(BUGLY_SO_VERSION);
 //#endif // BUGLY_SO_VERSION
 
+JNI_METHOD jstring Java_com_epicgames_ue4_GameActivity_nativeOnCrashNotify(JNIEnv* jenv, jobject thiz)
+{
+	UE_LOG(LogBugly, Error, TEXT("Bugly caught an exception!"));
+
+	TSharedPtr<FGenericBuglyDelegate> CrashDelegate = FBuglyModule::Get().GetBugly()->GetCrashDelegate();
+	const FString Logs = CrashDelegate.IsValid() ? CrashDelegate->OnCrashNotify() : TEXT("");
+
+	jstring LogsJava = jenv->NewStringUTF(TCHAR_TO_UTF8(*Logs));
+
+	return LogsJava;
+}
+
 FAndroidBugly::FAndroidBugly()
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
 		InitCrashReportMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_InitCrashReport", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V", false);
-		TestJavaCrashMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_TestJavaCrash", "()V", false);
-		TestANRCrashMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_TestANRCrash", "()V", false);
-		TestNativeCrashMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_TestNativeCrash", "()V", false);
-
 		SetUserIdMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_SetUserId", "(Ljava/lang/String;)V", false);
 		SetUserSceneTagMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_SetUserSceneTag", "(I)V", false);
 		PutUserDataMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_PutUserData", "(Ljava/lang/String;Ljava/lang/String;)V", false);
@@ -42,6 +52,7 @@ FAndroidBugly::FAndroidBugly()
 		LogWarningMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_LogWarning", "(Ljava/lang/String;Ljava/lang/String;)V", false);
 		LogErrorMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_LogError", "(Ljava/lang/String;Ljava/lang/String;)V", false);
 		SetLogCacheMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_SetLogCache", "(I)V", false);
+		UpdateAppVersionMethod = FJavaWrapper::FindMethod(Env, FJavaWrapper::GameActivityClassID, "AndroidThunkJava_Bugly_UpdateAppVersion", "(Ljava/lang/String;)V", false);
 	}
 }
 
@@ -55,15 +66,11 @@ void FAndroidBugly::OnStartup(const FString& InAppId, const FString& InAppVersio
 
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
-		jstring AppIDJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InAppId));
-		jstring AppVersionJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InAppVersion));
-		jstring AppChannelJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InAppChanenl));
+		auto AppIDJava = FJavaHelper::ToJavaString(Env, InAppId);
+		auto AppVersionJava = FJavaHelper::ToJavaString(Env, InAppVersion);
+		auto AppChannelJava = FJavaHelper::ToJavaString(Env, InAppChanenl);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, InitCrashReportMethod, AppIDJava, AppVersionJava, AppChannelJava, bDebug);
-
-		Env->DeleteLocalRef(AppIDJava);
-		Env->DeleteLocalRef(AppVersionJava);
-		Env->DeleteLocalRef(AppChannelJava);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, InitCrashReportMethod, *AppIDJava, *AppVersionJava, *AppChannelJava, bDebug);
 	}
 }
 
@@ -71,39 +78,13 @@ void FAndroidBugly::OnShutdown()
 {
 }
 
-void FAndroidBugly::TestJavaCrash()
-{
-	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
-	{
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, TestJavaCrashMethod);
-	}
-}
-
-void FAndroidBugly::TestANRCrash()
-{
-	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
-	{
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, TestANRCrashMethod);
-	}
-}
-
-void FAndroidBugly::TestNativeCrash()
-{
-	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
-	{
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, TestNativeCrashMethod);
-	}
-}
-
 void FAndroidBugly::SetUserId(const FString& InUserId)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
-		jstring UserIdJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InUserId));
+		auto UserIdJava = FJavaHelper::ToJavaString(Env, InUserId);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, SetUserIdMethod, UserIdJava);
-
-		Env->DeleteLocalRef(UserIdJava);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, SetUserIdMethod, *UserIdJava);
 	}
 }
 
@@ -119,13 +100,10 @@ void FAndroidBugly::PutUserData(const FString& InKey, const FString& InValue)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
-		jstring KeyJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InKey));
-		jstring ValueJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InValue));
+		auto KeyJava = FJavaHelper::ToJavaString(Env, InKey);
+		auto ValueJava = FJavaHelper::ToJavaString(Env, InValue);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, PutUserDataMethod, KeyJava, ValueJava);
-
-		Env->DeleteLocalRef(KeyJava);
-		Env->DeleteLocalRef(ValueJava);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, PutUserDataMethod, *KeyJava, *ValueJava);
 	}
 }
 
@@ -133,13 +111,10 @@ void FAndroidBugly::LogVerbose(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
-		jstring TagJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InTag));
-		jstring LogJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InLog));
+		auto TagJava = FJavaHelper::ToJavaString(Env, InTag);
+		auto LogJava = FJavaHelper::ToJavaString(Env, InLog);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogVerboseMethod, TagJava, LogJava);
-
-		Env->DeleteLocalRef(TagJava);
-		Env->DeleteLocalRef(LogJava);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogVerboseMethod, *TagJava, *LogJava);
 	}
 }
 
@@ -147,13 +122,10 @@ void FAndroidBugly::LogDebug(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
-		jstring TagJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InTag));
-		jstring LogJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InLog));
+		auto TagJava = FJavaHelper::ToJavaString(Env, InTag);
+		auto LogJava = FJavaHelper::ToJavaString(Env, InLog);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogDebugMethod, TagJava, LogJava);
-
-		Env->DeleteLocalRef(TagJava);
-		Env->DeleteLocalRef(LogJava);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogDebugMethod, *TagJava, *LogJava);
 	}
 }
 
@@ -161,13 +133,10 @@ void FAndroidBugly::LogInfo(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
-		jstring TagJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InTag));
-		jstring LogJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InLog));
+		auto TagJava = FJavaHelper::ToJavaString(Env, InTag);
+		auto LogJava = FJavaHelper::ToJavaString(Env, InLog);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogInfoMethod, TagJava, LogJava);
-
-		Env->DeleteLocalRef(TagJava);
-		Env->DeleteLocalRef(LogJava);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogInfoMethod, *TagJava, *LogJava);
 	}
 }
 
@@ -175,13 +144,10 @@ void FAndroidBugly::LogWarning(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
-		jstring TagJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InTag));
-		jstring LogJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InLog));
+		auto TagJava = FJavaHelper::ToJavaString(Env, InTag);
+		auto LogJava = FJavaHelper::ToJavaString(Env, InLog);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogWarningMethod, TagJava, LogJava);
-
-		Env->DeleteLocalRef(TagJava);
-		Env->DeleteLocalRef(LogJava);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogWarningMethod, *TagJava, *LogJava);
 	}
 }
 
@@ -189,13 +155,10 @@ void FAndroidBugly::LogError(const FString& InLog, const FString& InTag)
 {
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
-		jstring TagJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InTag));
-		jstring LogJava = Env->NewStringUTF(TCHAR_TO_UTF8(*InLog));
+		auto TagJava = FJavaHelper::ToJavaString(Env, InTag);
+		auto LogJava = FJavaHelper::ToJavaString(Env, InLog);
 
-		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogErrorMethod, TagJava, LogJava);
-
-		Env->DeleteLocalRef(TagJava);
-		Env->DeleteLocalRef(LogJava);
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, LogErrorMethod, *TagJava, *LogJava);
 	}
 }
 
@@ -204,5 +167,15 @@ void FAndroidBugly::SetLogCache(int32 ByteSize)
 	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
 	{
 		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, SetLogCacheMethod, ByteSize);
+	}
+}
+
+void FAndroidBugly::UpdateVersion(const FString& InAppVersion)
+{
+	if (JNIEnv* Env = FAndroidApplication::GetJavaEnv())
+	{
+		auto AppVersionJava = FJavaHelper::ToJavaString(Env, InAppVersion);
+
+		FJavaWrapper::CallVoidMethod(Env, FJavaWrapper::GameActivityThis, UpdateAppVersionMethod, *AppVersionJava);
 	}
 }

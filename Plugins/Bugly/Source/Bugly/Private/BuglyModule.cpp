@@ -32,13 +32,10 @@ void FBuglyModule::StartupModule()
 	if (Bugly.IsValid())
 	{
 		FString BuglyAppVersion, BuglyAppChannel;
-		bool bBuglyEnableDebug = false;
-
 		GConfig->GetString(TEXT("/Script/Bugly.BuglySettings"), TEXT("BuglyAppVersion"), BuglyAppVersion, GGameIni);
 		GConfig->GetString(TEXT("/Script/Bugly.BuglySettings"), TEXT("BuglyAppChannel"), BuglyAppChannel, GGameIni);
-		GConfig->GetBool(TEXT("/Script/Bugly.BuglySettings"), TEXT("bBuglyEnableDebug"), bBuglyEnableDebug, GGameIni);
 
-		Bugly->OnStartup(BuglyAppId, BuglyAppVersion, BuglyAppChannel, bBuglyEnableDebug);
+		Bugly->OnStartup(BuglyAppId, BuglyAppVersion, BuglyAppChannel, false);
 	}
 }
 

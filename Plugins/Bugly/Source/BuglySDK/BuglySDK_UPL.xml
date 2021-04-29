@@ -83,28 +83,36 @@
 
 	<gameActivityClassAdditions>
 		<insert>
+			public native String nativeOnCrashNotify();
+
 			public void AndroidThunkJava_Bugly_InitCrashReport(String AppId, String AppVersion, String AppChannel, boolean bDebug)
 			{
 			CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
 			strategy.setAppChannel(AppChannel);
 			strategy.setAppVersion(AppVersion);
-
+			strategy.setCrashHandleCallback(new CrashReport.CrashHandleCallback() {
+				public Map&lt;String, String&gt; onCrashHandleStart(int crashType, String errorType,
+					String errorMessage, String errorStack) {
+						Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();
+						String ExtraData = nativeOnCrashNotify();
+						map.put("attachDatas:", ExtraData);
+						return map;
+					}
+				
+				/*
+				@Override
+				public byte[] onCrashHandleStart2GetExtraDatas(int crashType, String errorType, 
+						String errorMessage, String errorStack) {
+					try {
+						String ExtraData = nativeOnCrashNotify();
+						return ExtraData.getBytes("UTF-8");
+					} catch (Exception e) {
+						return null;
+					}
+				}*/
+			});
+			
 			CrashReport.initCrashReport(getApplicationContext(), AppId, bDebug, strategy);
-			}
-
-			public void AndroidThunkJava_Bugly_TestJavaCrash()
-			{
-			CrashReport.testJavaCrash();
-			}
-
-			public void AndroidThunkJava_Bugly_TestANRCrash()
-			{
-			CrashReport.testANRCrash();
-			}
-
-			public void AndroidThunkJava_Bugly_TestNativeCrash()
-			{
-			CrashReport.testNativeCrash();
 			}
 
 			public void AndroidThunkJava_Bugly_SetUserId(String UserId)
@@ -150,6 +158,10 @@
 			public void AndroidThunkJava_Bugly_SetLogCache(int ByteSize)
 			{
 			BuglyLog.setCache(ByteSize);
+			}
+			public void AndroidThunkJava_Bugly_UpdateAppVersion(String AppVersion)
+			{
+			CrashReport.setAppVersion(getApplicationContext(), AppVersion);
 			}
 		</insert>
 	</gameActivityClassAdditions>

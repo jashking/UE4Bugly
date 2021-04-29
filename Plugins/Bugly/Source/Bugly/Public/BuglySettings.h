@@ -21,9 +21,6 @@ public:
 	UPROPERTY(EditAnywhere, config)
 	FString BuglyAppChannel;
 
-	UPROPERTY(EditAnywhere, config)
-	bool bBuglyEnableDebug = false;
-
 	UPROPERTY(EditAnywhere, config, Category = "Android")
 	FString AndroidAppID;
 	
