@@ -15,6 +15,10 @@
 		<copyDir src="$S(PluginDir)/Android/libs/$S(Architecture)/" dst="$S(BuildDir)/libs/$S(Architecture)/" />
 	</resourceCopies>
 
+	<soLoadLibrary>
+		<loadLibrary name="bugly" failmsg="bugly library not loaded and required!"/>
+	</soLoadLibrary>
+
 	<proguardAdditions>
 		<insert>
 			-dontwarn com.tencent.bugly.**
